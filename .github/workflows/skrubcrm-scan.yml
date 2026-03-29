@@ -1,0 +1,11 @@
+name: SkrubCRM - Automated Scans
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger scan API
+        run: curl -sf --max-time 120 -X POST -H "Content-Type: application/json" -H "x-cron-secret: ${{ secrets.SKRUBCRM_CRON_SECRET }}" -d "{"dry_run": false}" "${{ secrets.SKRUBCRM_API_URL }}/api/scan/run"
