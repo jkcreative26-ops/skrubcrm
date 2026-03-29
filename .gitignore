@@ -1,0 +1,20 @@
+# Secrets — never commit
+.env
+.env.*
+.env.deploy
+.env.local
+.env.production
+
+# Next.js
+.next/
+out/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+
+# Vercel
+.vercel/
+.vercel
