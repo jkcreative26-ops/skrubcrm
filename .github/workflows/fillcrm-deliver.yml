@@ -1,11 +1,21 @@
 name: FillCRM - Monthly Delivery
+
 on:
   schedule:
     - cron: "0 9 1 * *"
   workflow_dispatch:
+
 jobs:
   deliver:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger FillCRM delivery
-        run: curl -sf --max-time 300 -X POST -H "Content-Type: application/json" -H "x-cron-secret: ${{ secrets.SKRUBCRM_CRON_SECRET }}" -d "{"dry_run": false}" "${{ secrets.SKRUBCRM_API_URL }}/api/fillcrm/deliver"
+        env:
+          API_URL: ${{ secrets.SKRUBCRM_API_URL }}
+          CRON_SECRET: ${{ secrets.SKRUBCRM_CRON_SECRET }}
+        run: |
+          curl -sf --max-time 300 -X POST \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: $CRON_SECRET" \
+            -d '{"dry_run": false}' \
+            "$API_URL/api/fillcrm/deliver"

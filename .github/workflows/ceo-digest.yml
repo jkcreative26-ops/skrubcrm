@@ -1,11 +1,21 @@
 name: CEO Agent - Daily Digest
+
 on:
   schedule:
     - cron: "0 6 * * *"
   workflow_dispatch:
+
 jobs:
   digest:
     runs-on: ubuntu-latest
     steps:
       - name: Run CEO digest
-        run: curl -sf --max-time 30 -X POST -H "Content-Type: application/json" -H "x-cron-secret: ${{ secrets.SKRUBCRM_CRON_SECRET }}" -d "{}" "${{ secrets.SKRUBCRM_API_URL }}/api/ceo/digest"
+        env:
+          API_URL: ${{ secrets.SKRUBCRM_API_URL }}
+          CRON_SECRET: ${{ secrets.SKRUBCRM_CRON_SECRET }}
+        run: |
+          curl -sf --max-time 30 -X POST \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: $CRON_SECRET" \
+            -d '{}' \
+            "$API_URL/api/ceo/digest"
