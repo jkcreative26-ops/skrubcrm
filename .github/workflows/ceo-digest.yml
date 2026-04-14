@@ -5,16 +5,27 @@ on:
     - cron: "0 6 * * *"
   workflow_dispatch:
 
+permissions: {}
+
+concurrency:
+  group: ceo-digest
+  cancel-in-progress: false
+
 jobs:
   digest:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: Run CEO digest
         env:
           API_URL: ${{ secrets.SKRUBCRM_API_URL }}
           CRON_SECRET: ${{ secrets.SKRUBCRM_CRON_SECRET }}
         run: |
-          curl -sf --max-time 30 -X POST \
+          : "${API_URL:?SKRUBCRM_API_URL secret not set}"
+          : "${CRON_SECRET:?SKRUBCRM_CRON_SECRET secret not set}"
+          curl -fsS --max-time 30 \
+            --retry 3 --retry-delay 5 --retry-connrefused \
+            -X POST \
             -H "Content-Type: application/json" \
             -H "x-cron-secret: $CRON_SECRET" \
             -d '{}' \
